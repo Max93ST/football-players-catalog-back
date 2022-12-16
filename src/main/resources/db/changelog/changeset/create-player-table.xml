@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="starkov" id="create-player-table">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="player"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="player">
+            <column name="id" type="bigint">
+                <constraints unique="true" primaryKey="true"/>
+            </column>
+            <column name="first_name" type="VARCHAR(255)">
+              <constraints notNullConstraintName="first_name"/>
+            </column>
+            <column name="second_name" type="VARCHAR(255)"/>
+            <column name="gender" type="VARCHAR(10)"/>
+            <column name="birthday" type="timestamp"/>
+            <column name="team_id" type="bigint">
+                <constraints foreignKeyName="fk_team" references="team(id)"/>
+            </column>
+            <column name="country" type="VARCHAR(255)"/>
+            <column name="deleted" type="boolean" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-player-sequence" author="starkov">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="player"/>
+        </preConditions>
+
+        <createSequence sequenceName="player_seq" startValue="20000" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet author="starkov" id="create-player-index">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="player"/>
+        </preConditions>
+
+        <createIndex indexName="index_gender" tableName="player">
+            <column name="gender"/>
+        </createIndex>
+
+        <createIndex indexName="index_country" tableName="player">
+            <column name="country"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
